@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title>Chat App</title>
@@ -25,78 +26,16 @@
     .blue { color: blue; }
   </style>
 </head>
+
 <body>
-  <div id="chat"></div>
-  <input type="text" id="messageInput" placeholder="Type a message...">
-  <button id="sendButton" onclick="sendMessage()">Send</button>
-  <label for="fontSizeRange">Adjust Font Size</label>
-  <input type="range" id="fontSizeRange" min="10" max="60" value="16" onchange="changeFontSize(this.value)">
-  
-  <script>
-    const ws = new WebSocket('ws://localhost:8080');
-    const chat = document.getElementById('chat');
-    const messageInput = document.getElementById('messageInput');
-    const sendButton = document.getElementById('sendButton');
-    const fontSizeRange = document.getElementById('fontSizeRange');
-    let username = '';
-    
-    // 사용자 이름 입력받기
-    while (!username) {
-      username = prompt('Enter your username:');
-    }
-    
-    ws.onmessage = function(event) {
-      if (event.data instanceof Blob) {
-        const reader = new FileReader();
-        reader.onload = function() {
-          const message = document.createElement('p');
-          message.textContent = reader.result;
-          message.classList.add('chat-message');
-          message.style.fontSize = fontSizeRange.value + 'px';
-          setTextColor(message);  
-          chat.appendChild(message);
-        };
-        reader.readAsText(event.data);
-      } else {
-        const message = document.createElement('p');
-        message.textContent = event.data;
-        message.classList.add('chat-message');
-        message.style.fontSize = fontSizeRange.value + 'px';
-        setTextColor(message);  
-        chat.appendChild(message);
-      }
-    };
-    
-    function enterkey(e) {
-      if (e.keyCode === 13) {
-        sendMessage();
-      }
-    }
-    messageInput.addEventListener('keyup', event => enterkey(event));
-    
-    function sendMessage() {
-      const message = `${username}: ${messageInput.value}`;
-      ws.send(message);
-      messageInput.value = '';
-    }
-    
-    function changeFontSize(size) {
-      const chatMessages = document.querySelectorAll('.chat-message');
-      chatMessages.forEach(function(message) {
-        message.style.fontSize = size + 'px';
-      })};
+    <h2>Welcome to the chat server!</h2>
+    <div id="chat"></div>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+    <label for="fontSizeRange">Adjust Font Size</label>
+    <input type="range" id="fontSizeRange" min="10" max="60" value="16" onchange="changeFontSize(this.value)">
 
-    function setTextColor(element) {
-            const firstChar = element.textContent.trim().charAt(0); // 첫 글자 가져오기
-            if (/[a-zA-Z]/.test(firstChar)) { // 영어 알파벳인지 확인
-                if (firstChar.toLowerCase() == 'a') {
-                    element.classList.add('red'); // 알파벳이 'a'면 빨간색
-                } else {
-                    element.classList.add('blue'); // 그렇지 않으면 파란색
-                }
-            }
-    }  
-
-  </script>
+    <script src="script.js"></script>
 </body>
+
 </html>
