@@ -2,6 +2,11 @@
 <html>
 <head>
     <title>Chat App</title>
+    <style>
+        .red { color: red; }
+        .blue { color: blue; }
+        /* 다른 색상 클래스들을 필요에 따라 추가할 수 있습니다 */
+    </style>
 </head>
 <body>
     <div id="chat"></div>
@@ -9,7 +14,7 @@
     <button onclick="sendMessage()">Send</button>
 
     <script>
-        const ws = new WebSocket('ws://10.6.162.4:8080');
+        const ws = new WebSocket('ws://localhost:8080');
         const chat = document.getElementById('chat');
         const messageInput = document.getElementById('messageInput');
 
@@ -20,6 +25,7 @@
                 reader.onload = function() {
                     const message = document.createElement('p');
                     message.textContent = reader.result;
+                    setTextColor(message);
                     chat.appendChild(message);
                 };
                 reader.readAsText(event.data);
@@ -35,6 +41,17 @@
             const message = messageInput.value;
             ws.send(message);
             messageInput.value = '';
+        }
+
+        function setTextColor(element) {
+            const firstChar = element.textContent.trim().charAt(0); // 첫 글자 가져오기
+            if (/[a-zA-Z]/.test(firstChar)) { // 영어 알파벳인지 확인
+                if (firstChar.toLowerCase() == 'a') {
+                    element.classList.add('red'); // 알파벳이 'a'면 빨간색
+                } else {
+                    element.classList.add('blue'); // 그렇지 않으면 파란색
+                }
+            }
         }
     </script>
 </body>
