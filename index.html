@@ -1,80 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chat App</title>
-    <style>
-        /* 입력란 스타일 */
-        #messageInput {
-            width: 200px; /* 입력란 너비 조절 */
-            font-size: 16px; /* 입력란의 글자 크기 조절 */
-        }
-
-        /* 전송 버튼 스타일 */
-        #sendButton {
-            font-size: 16px; /* 버튼의 글자 크기 조절 */
-        }
-
-        /* 채팅 메시지 스타일 */
-        .chat-message {
-            font-size: 16px; /* 채팅 메시지의 기본 글자 크기 설정 */
-            margin-bottom: 2px; /* 각 채팅 메시지 사이의 간격 조절 */
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Chat App</title>
+  <style>
+    /* 입력란 스타일 */
+    #messageInput {
+      width: 200px; /* 입력란 너비 조절 */
+      font-size: 16px; /* 입력란의 글자 크기 조절 */
+    }
+    
+    /* 전송 버튼 스타일 */
+    #sendButton {
+      font-size: 16px; /* 버튼의 글자 크기 조절 */
+    }
+    
+    /* 채팅 메시지 스타일 */
+    .chat-message {
+      font-size: 16px; /* 채팅 메시지의 기본 글자 크기 설정 */
+      margin-bottom: 2px; /* 각 채팅 메시지 사이의 간격 조절 */
+    }
+  </style>
 </head>
 <body>
-    <div id="chat"></div>
-    <input type="text" id="messageInput" placeholder="Type a message...">
-    <button id="sendButton" onclick="sendMessage()">Send</button>
-    <label for="fontSizeRange">Adjust Font Size</label>
-    <input type="range" id="fontSizeRange" min="10" max="60" value="16" onchange="changeFontSize(this.value)">
+  <div id="chat"></div>
+  <input type="text" id="messageInput" placeholder="Type a message...">
+  <button id="sendButton" onclick="sendMessage()">Send</button>
+  <label for="fontSizeRange">Adjust Font Size</label>
+  <input type="range" id="fontSizeRange" min="10" max="60" value="16" onchange="changeFontSize(this.value)">
+  
+  <script>
+    const ws = new WebSocket('ws://localhost:8080');
+    const chat = document.getElementById('chat');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const fontSizeRange = document.getElementById('fontSizeRange');
+    let username = '';
     
-
-    <script>
-        const ws = new WebSocket('ws://localhost:8080');
-        const chat = document.getElementById('chat');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-        const fontSizeRange = document.getElementById('fontSizeRange');
-
-        ws.onmessage = function(event) {
-            if (event.data instanceof Blob) {
-                const reader = new FileReader();
-                reader.onload = function() {
-                    const message = document.createElement('p');
-                    message.textContent = reader.result;
-                    message.classList.add('chat-message'); // chat-message 클래스 추가
-                    message.style.fontSize = fontSizeRange.value + 'px'; // 글자 크기 조절
-                    chat.appendChild(message);
-                };
-                reader.readAsText(event.data);
-            } else {
-                const message = document.createElement('p');
-                message.textContent = event.data;
-                message.classList.add('chat-message'); // chat-message 클래스 추가
-                message.style.fontSize = fontSizeRange.value + 'px'; // 글자 크기 조절
-                chat.appendChild(message);
-            }
+    // 사용자 이름 입력받기
+    while (!username) {
+      username = prompt('Enter your username:');
+    }
+    
+    ws.onmessage = function(event) {
+      if (event.data instanceof Blob) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          const message = document.createElement('p');
+          message.textContent = reader.result;
+          message.classList.add('chat-message');
+          message.style.fontSize = fontSizeRange.value + 'px';
+          chat.appendChild(message);
         };
-
-        function enterkey(e) {
-            if(e.keyCode === 13){
-                sendMessage();
-            }
-        }
-        messageInput.addEventListener('keyup', event => enterkey(event));
-
-        function sendMessage() {
-            const message = messageInput.value;
-            ws.send(message);
-            messageInput.value = '';
-        }
-
-        function changeFontSize(size) {
-            const chatMessages = document.querySelectorAll('.chat-message');
-            chatMessages.forEach(function(message) {
-                message.style.fontSize = size + 'px';
-            });
-        }
-    </script>
+        reader.readAsText(event.data);
+      } else {
+        const message = document.createElement('p');
+        message.textContent = event.data;
+        message.classList.add('chat-message');
+        message.style.fontSize = fontSizeRange.value + 'px';
+        chat.appendChild(message);
+      }
+    };
+    
+    function enterkey(e) {
+      if (e.keyCode === 13) {
+        sendMessage();
+      }
+    }
+    messageInput.addEventListener('keyup', event => enterkey(event));
+    
+    function sendMessage() {
+      const message = `${username}: ${messageInput.value}`;
+      ws.send(message);
+      messageInput.value = '';
+    }
+    
+    function changeFontSize(size) {
+      const chatMessages = document.querySelectorAll('.chat-message');
+      chatMessages.forEach(function(message) {
+        message.style.fontSize = size + 'px';
+      });
+    }
+  </script>
 </body>
 </html>
