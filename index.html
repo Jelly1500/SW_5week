@@ -20,6 +20,9 @@
       font-size: 16px; /* 채팅 메시지의 기본 글자 크기 설정 */
       margin-bottom: 2px; /* 각 채팅 메시지 사이의 간격 조절 */
     }
+    /* 다른 색상 클래스들을 필요에 따라 추가할 수 있습니다 */   
+    .red { color: red; }
+    .blue { color: blue; }
   </style>
 </head>
 <body>
@@ -50,6 +53,7 @@
           message.textContent = reader.result;
           message.classList.add('chat-message');
           message.style.fontSize = fontSizeRange.value + 'px';
+          setTextColor(message);  
           chat.appendChild(message);
         };
         reader.readAsText(event.data);
@@ -58,6 +62,7 @@
         message.textContent = event.data;
         message.classList.add('chat-message');
         message.style.fontSize = fontSizeRange.value + 'px';
+        setTextColor(message);  
         chat.appendChild(message);
       }
     };
@@ -81,6 +86,16 @@
         message.style.fontSize = size + 'px';
       });
     }
+    function setTextColor(element) {
+            const firstChar = element.textContent.trim().charAt(0); // 첫 글자 가져오기
+            if (/[a-zA-Z]/.test(firstChar)) { // 영어 알파벳인지 확인
+                if (firstChar.toLowerCase() == 'a') {
+                    element.classList.add('red'); // 알파벳이 'a'면 빨간색
+                } else {
+                    element.classList.add('blue'); // 그렇지 않으면 파란색
+                }
+            }
+    }  
   </script>
 </body>
 </html>
