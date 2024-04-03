@@ -1,37 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Chat App</title>
+  <meta charset="utf-8">
+  <title>Chat App</title>
 </head>
 <body>
-    <div id="chat"></div>
-    <input type="text" id="nameInput" placeholder="Enter your name...">
-    <input type="text" id="messageInput" placeholder="Type a message...">
-    <button onclick="sendMessage()">Send</button>
+  <div id="chat"></div>
+  <input type="text" id="messageInput" placeholder="Type a message...">
+  <button onclick="sendMessage()">Send</button>
 
-    <script>
-        const ws = new WebSocket('ws://localhost:8080');
-        const chat = document.getElementById('chat');
-        const nameInput = document.getElementById('nameInput');
-        const messageInput = document.getElementById('messageInput');
+  <script>
+    const ws = new WebSocket('ws://localhost:8080');
+    const chat = document.getElementById('chat');
+    const messageInput = document.getElementById('messageInput');
+    let username = '';
 
-        ws.onopen = function() {
-            const name = nameInput.value;
-            ws.send(JSON.stringify({ type: 'name', text: name }));
+    // 사용자 이름 입력받기
+    while (!username) {
+      username = prompt('Enter your username:');
+    }
+
+    ws.onmessage = function(event) {
+      // event.data가 Blob 인스턴스일 경우 FileReader를 사용해서 읽어오기
+      if (event.data instanceof Blob) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          const message = document.createElement('p');
+          message.textContent = reader.result;
+          chat.appendChild(message);
         };
+        reader.readAsText(event.data);
+      } else {
+        // 메시지가 문자열인 경우, 직접 표시
+        const message = document.createElement('p');
+        message.textContent = event.data;
+        chat.appendChild(message);
+      }
+    };
 
-        ws.onmessage = function(event) {
-            const message = document.createElement('p');
-            message.textContent = event.data;
-            chat.appendChild(message);
-        };
-
-        function sendMessage() {
-            const message = messageInput.value;
-            ws.send(JSON.stringify({ type: 'message', text: message }));
-            messageInput.value = '';
-        }
-    </script>
+    function sendMessage() {
+      const message = `${username}: ${messageInput.value}`;
+      ws.send(message);
+      messageInput.value = '';
+    }
+  </script>
 </body>
 </html>
