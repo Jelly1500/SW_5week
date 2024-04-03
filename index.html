@@ -6,10 +6,10 @@
 <body>
     <div id="chat"></div>
     <input type="text" id="messageInput" placeholder="Type a message...">
-    <button onclick="sendMessage()">Send</button>
+    <button onclick="sendMessage()" onkeyup="enterkey()">Send</button>
 
     <script>
-        const ws = new WebSocket('ws://10.6.162.4:8080');
+        const ws = new WebSocket('ws://localhost:8080');
         const chat = document.getElementById('chat');
         const messageInput = document.getElementById('messageInput');
 
@@ -30,6 +30,12 @@
                 chat.appendChild(message);
             }
         };
+
+        function enterkey() {
+            if (window.event.keyCode == 13) {
+                sendMessage();
+            }
+        }
 
         function sendMessage() {
             const message = messageInput.value;
