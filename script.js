@@ -44,11 +44,14 @@ ws.onmessage = function (event) {
       document.querySelectorAll(`p[data-id='${data.messageId}']`).forEach(el => el.remove());
     } else {
       addMessageToChat(data.text, data.messageId, data.username);
+      scrollToBottom();
     }
   }
 };
 
 function addMessageToChat(messageText, messageId, messageUsername) {
+  var icon = document.createElement('i');
+  icon.classList.add('fas', 'fa-trash'); // 휴지통 아이콘에 해당하는 클래스 추가
   const message = document.createElement('p');
   message.dataset.id = messageId;
   message.classList.add('chat-message');
@@ -64,10 +67,12 @@ function addMessageToChat(messageText, messageId, messageUsername) {
   if (messageUsername === username) {
     message.classList.add('self');
       const deleteButton = document.createElement('button');
-      deleteButton.textContent = "Delete";
+      //deleteButton.textContent = "Delete";
       deleteButton.onclick = function () {
           ws.send(JSON.stringify({ action: 'delete', messageId: message.dataset.id }));
       };
+      deleteButton.classList.add('delete-button');
+      deleteButton.appendChild(icon);
       message.appendChild(deleteButton);
   }else{
     message.classList.add('other');
@@ -89,6 +94,7 @@ function sendMessage() {
     ws.send(JSON.stringify(messageData)); // 메시지 객체를 JSON 문자열로 변환하여 전송
     messageInput.value = '';
   }
+  scrollToBottom();
 }
 
 function enterkey(e) {
@@ -115,4 +121,8 @@ function changeFontSize(size) {
   chatMessages.forEach(function (message) {
     message.style.fontSize = size + 'px';
   });
+}
+function scrollToBottom() {
+  var chat = document.getElementById('chat');
+  chat.scrollTop = chat.scrollHeight;
 }
