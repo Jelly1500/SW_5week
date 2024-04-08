@@ -1,41 +1,67 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <title>Chat App</title>
   <style>
     /* 입력란 스타일 */
     #messageInput {
-      width: 200px; /* 입력란 너비 조절 */
-      font-size: 16px; /* 입력란의 글자 크기 조절 */
+      width: 200px;
+      font-size: 16px;
     }
-    
     /* 전송 버튼 스타일 */
     #sendButton {
-      font-size: 16px; /* 버튼의 글자 크기 조절 */
+      font-size: 16px;
     }
-    
     /* 채팅 메시지 스타일 */
     .chat-message {
-      font-size: 16px; /* 채팅 메시지의 기본 글자 크기 설정 */
-      margin-bottom: 2px; /* 각 채팅 메시지 사이의 간격 조절 */
+      font-size: 16px;
+      margin-bottom: 2px;
     }
-    /* 다른 색상 클래스들을 필요에 따라 추가할 수 있습니다 */   
-    .red { color: red; }
-    .blue { color: blue; }
+    /* 다른 색상 클래스들을 필요에 따라 추가할 수 있습니다 */
+    .red {
+      color: red;
+    }
+    .blue {
+      color: blue;
+    }
+    
+    /* 벚꽃 배경 관련 스타일 */
+    body {
+      background-color: #f7d1d1;
+      overflow: hidden;
+    }
+    .cherry-blossom {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #ffb7c5;
+      border-radius: 50%;
+      animation: fall 5s linear infinite;
+    }
+    @keyframes fall {
+      0% {
+        transform: translate(0, -100vh);
+      }
+      100% {
+        transform: translate(0, 100vh);
+      }
+    }
   </style>
 </head>
-
 <body>
-    <h2>Welcome to the chat server!</h2>
-    <div id="chat"></div>
-    <input type="text" id="messageInput" placeholder="Type a message...">
-    <button onclick="sendMessage()">Send</button>
-    <label for="fontSizeRange">Adjust Font Size</label>
-    <input type="range" id="fontSizeRange" min="10" max="60" value="16" onchange="changeFontSize(this.value)">
+  <div class="cherry-blossom"></div>
+  <div class="cherry-blossom"></div>
+  <div class="cherry-blossom"></div>
+  <div class="cherry-blossom"></div>
+  <div class="cherry-blossom"></div>
 
-    <script src="script.js"></script>
+  <h2>Welcome to the chat server!</h2>
+  <div id="chat"></div>
+  <input type="text" id="messageInput" placeholder="Type a message...">
+  <button onclick="sendMessage()">Send</button>
+  <label for="fontSizeRange">Adjust Font Size</label>
+  <input type="range" id="fontSizeRange" min="10" max="60" value="16" onchange="changeFontSize(this.value)">
+  <script src="script.js"></script>
 </body>
-
 </html>
