@@ -63,6 +63,11 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
     message.classList.add('chat-message');
+    if (messageUsername === username) {
+      message.classList.add('self');
+    } else {
+      message.classList.add('other');
+    }
     message.style.fontSize = fontSizeRange.value + 'px';
     message.textContent = messageText;
     setTextColor(message);
@@ -91,22 +96,22 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   messageInput.addEventListener('keyup', event => enterkey(event));
-
-function setTextColor(element) {
-  const firstChar = element.textContent.trim().charAt(0); // 첫 글자 가져오기
-  if (/[a-zA-Z]/.test(firstChar)) { // 영어 알파벳인지 확인
-    if (firstChar.toLowerCase() === 'a') {
-      element.classList.add('red'); // 알파벳이 'a'면 빨간색
-      element.classList.remove('blue'); // 파란색 클래스 제거
+  
+  function setTextColor(element) {
+    const firstChar = element.textContent.trim().charAt(0); // 첫 글자 가져오기
+    if (/[a-zA-Z]/.test(firstChar)) { // 영어 알파벳인지 확인
+      if (firstChar.toLowerCase() === 'a') {
+        element.classList.add('red'); // 알파벳이 'a'면 빨간색
+        element.classList.remove('blue'); // 파란색 클래스 제거
+      } else {
+        element.classList.add('blue'); // 그렇지 않으면 파란색
+        element.classList.remove('red'); // 빨간색 클래스 제거
+      }
     } else {
-      element.classList.add('blue'); // 그렇지 않으면 파란색
-      element.classList.remove('red'); // 빨간색 클래스 제거
+      element.classList.remove('red'); // 영어 알파벳이 아닌 경우 색상 클래스 제거
+      element.classList.remove('blue');
     }
-  } else {
-    element.classList.remove('red'); // 영어 알파벳이 아닌 경우 색상 클래스 제거
-    element.classList.remove('blue');
   }
-}
   
   function changeFontSize(size) {
     const chatMessages = document.querySelectorAll('.chat-message');
