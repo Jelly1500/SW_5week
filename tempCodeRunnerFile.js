@@ -1,4 +1,4 @@
-/ npm install ws
+// npm install ws
 
 const WebSocket = require('ws');
 
