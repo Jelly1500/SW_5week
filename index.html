@@ -16,7 +16,19 @@
     /* 채팅 메시지 스타일 */
     .chat-message {
       font-size: 16px;
-      margin-bottom: 2px;
+      margin-bottom: 10px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    .chat-message.self {
+      background-color: #DCF8C6;
+      align-self: flex-end;
+    }
+    .chat-message.other {
+      background-color: #FFFFFF;
+      align-self: flex-start;
     }
     /* 다른 색상 클래스들을 필요에 따라 추가할 수 있습니다 */
     .red {
@@ -25,7 +37,6 @@
     .blue {
       color: blue;
     }
-    
     /* 벚꽃 배경 관련 스타일 */
     body {
       background-color: #f7d1d1;
@@ -47,6 +58,25 @@
         transform: translate(0, 100vh);
       }
     }
+    #chat {
+      display: flex;
+      flex-direction: column;
+    }
+    /* 채팅 입력 기능을 정 중앙으로 이동 */
+    .input-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+    }
+    /* 제목을 위쪽 중앙으로 이동 */
+    .title {
+      text-align: center;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -56,12 +86,14 @@
   <div class="cherry-blossom"></div>
   <div class="cherry-blossom"></div>
 
-  <h2>Welcome to the chat server!</h2>
+  <h2 class="title">어서오세요! SW 채팅창입니다.</h2>
   <div id="chat"></div>
-  <input type="text" id="messageInput" placeholder="Type a message...">
-  <button onclick="sendMessage()">Send</button>
-  <label for="fontSizeRange">Adjust Font Size</label>
-  <input type="range" id="fontSizeRange" min="10" max="60" value="16" onchange="changeFontSize(this.value)">
+  <div class="input-container">
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+    <label for="fontSizeRange">Adjust Font Size</label>
+    <input type="range" id="fontSizeRange" min="10" max="60" value="16" onchange="changeFontSize(this.value)">
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
