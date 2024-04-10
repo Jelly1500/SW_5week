@@ -1,80 +1,119 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chat App</title>
-    <style>
-        /* 입력란 스타일 */
-        #messageInput {
-            width: 200px; /* 입력란 너비 조절 */
-            font-size: 16px; /* 입력란의 글자 크기 조절 */
-        }
-
-        /* 전송 버튼 스타일 */
-        #sendButton {
-            font-size: 16px; /* 버튼의 글자 크기 조절 */
-        }
-
-        /* 채팅 메시지 스타일 */
-        .chat-message {
-            font-size: 16px; /* 채팅 메시지의 기본 글자 크기 설정 */
-            margin-bottom: 2px; /* 각 채팅 메시지 사이의 간격 조절 */
-        }
-    </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <meta charset="utf-8">
+  <title>Chat App</title>
+  <style>
+    /* 입력란 스타일 */
+    #messageInput {
+      width: 200px;
+      font-size: 16px;
+    }
+    /* 전송 버튼 스타일 */
+    #sendButton {
+      font-size: 16px;
+    }
+    /* 채팅 메시지 스타일 */
+    .chat-message {
+      font-size: 16px;
+      margin-bottom: 10px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    .chat-message.self {
+      background-color: #DCF8C6;
+      align-self: flex-end; /* 자신의 메시지 정렬 */
+      margin-left: auto; /* 오른쪽 정렬을 위해 왼쪽 마진 자동 조정 */
+    }
+    
+    .chat-message.other {
+      background-color: #FFFFFF;
+      align-self: flex-start;
+    }
+    /* 다른 색상 클래스들을 필요에 따라 추가할 수 있습니다 */
+    .red {
+      color: red;
+    }
+    .blue {
+      color: blue;
+    }
+    /* 벚꽃 배경 관련 스타일 */
+    body {
+      background-color: #f7d1d1;
+      overflow: hidden;
+    }
+    .cherry-blossom {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #ffb7c5;
+      border-radius: 50%;
+      animation: fall 5s linear infinite;
+    }
+    @keyframes fall {
+      0% {
+        transform: translate(0, -100vh);
+      }
+      100% {
+        transform: translate(0, 100vh);
+      }
+    }#chat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start; /* 상대방 메시지 정렬 */
+      max-width: 600px; /* 최대 너비 설정 */
+      margin: 0 auto; /* 중앙 정렬 */
+      height: 80vh; /* 채팅창의 높이 설정 */
+      overflow-y: scroll; /* 스크롤 가능하도록 설정 */
+      padding-right: 10px; /* 오른쪽에 스크롤바 공간 확보 */
+      scrollbar-width: none; /* 파이어폭스에서 스크롤바 숨김 */
+    }
+    
+    #chat::-webkit-scrollbar {
+      display: none; /* 크롬, 사파리 등 웹킷 기반 브라우저에서 스크롤바 숨김 */
+    }
+    
+    /* 채팅 입력 기능을 정 중앙으로 이동 */
+    .input-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      bottom: 50px; /* 입력란의 위치를 화면 아래쪽에서 50px 위로 조정 */
+      left: 0;
+      right: 0;
+    }
+    /* 제목을 위쪽 중앙으로 이동 */
+    .title {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .delete-button {
+      background-color: transparent; /* 배경색 투명 */
+      border: none; /* 테두리 없음 */
+      cursor: pointer; /* 마우스 오버 시 커서 변경 */
+    }
+    
+  </style>
 </head>
 <body>
-    <div id="chat"></div>
+  <div class="cherry-blossom"></div>
+  <div class="cherry-blossom"></div>
+  <div class="cherry-blossom"></div>
+  <div class="cherry-blossom"></div>
+  <div class="cherry-blossom"></div>
+
+  <h2 class="title">어서오세요! SW 채팅창입니다.</h2>
+  <div id="chat"></div>
+  <div class="input-container">
     <input type="text" id="messageInput" placeholder="Type a message...">
-    <button id="sendButton" onclick="sendMessage()">Send</button>
+    <button onclick="sendMessage()">Send</button>
     <label for="fontSizeRange">Adjust Font Size</label>
     <input type="range" id="fontSizeRange" min="10" max="60" value="16" onchange="changeFontSize(this.value)">
-    
-
-    <script>
-        const ws = new WebSocket('ws://localhost:8080');
-        const chat = document.getElementById('chat');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-        const fontSizeRange = document.getElementById('fontSizeRange');
-
-        ws.onmessage = function(event) {
-            if (event.data instanceof Blob) {
-                const reader = new FileReader();
-                reader.onload = function() {
-                    const message = document.createElement('p');
-                    message.textContent = reader.result;
-                    message.classList.add('chat-message'); // chat-message 클래스 추가
-                    message.style.fontSize = fontSizeRange.value + 'px'; // 글자 크기 조절
-                    chat.appendChild(message);
-                };
-                reader.readAsText(event.data);
-            } else {
-                const message = document.createElement('p');
-                message.textContent = event.data;
-                message.classList.add('chat-message'); // chat-message 클래스 추가
-                message.style.fontSize = fontSizeRange.value + 'px'; // 글자 크기 조절
-                chat.appendChild(message);
-            }
-        };
-
-        function enterkey(e) {
-            if(e.keyCode === 13){
-                sendMessage();
-            }
-        }
-        messageInput.addEventListener('keyup', event => enterkey(event));
-
-        function sendMessage() {
-            const message = messageInput.value;
-            ws.send(message);
-            messageInput.value = '';
-        }
-
-        function changeFontSize(size) {
-            const chatMessages = document.querySelectorAll('.chat-message');
-            chatMessages.forEach(function(message) {
-                message.style.fontSize = size + 'px';
-            });
-        }
-    </script>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
